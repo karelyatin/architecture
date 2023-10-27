@@ -1,6 +1,10 @@
 #
 # CHANGEME:
 #
+# - Change "spec.baremetalSetTemplate.ctlplaneInterface" to be the control plane
+#   interface on your compute nodes
+# - Change "spec.baremetalSetTemplate.provisioningInterface" to be the provisioning
+#   interface used by Metal3 on your OpenShift nodes
 # - Change the interface name specified in "spec.nodeTemplate.ansible.ansibleVars.edpm_network_config_template"
 #   to be the control plane interface on your compute nodes
 #     i.e.
@@ -11,8 +15,14 @@
 #   match the CIDR of your control plane network, if necessary
 # - Change "edpm_bootstrap_command" to include subscription-manager and podman login
 #   commands to register the EDPM nodes as in https://access.redhat.com/solutions/253273
-# - Change the "spec.nodes[].ansible.ansibleHost" and "spec.nodes[].networks[0].fixedIP" values 
-#   to match the control plane IPs of your nodes, if necessary
+#
+# EXTERNAL DEPENDENCIES:
+#
+# - "spec.nodes" lists 3 nodes that will require 3 metal3.io/v1alpha1 BareMetalHost resources, 
+#   which are the user's responsibility to have added to the cluster ahead of time.  They also 
+#   must be labelled "app: openstack" for the purposes of this OpenStackDataPlaneNodeSet
+#   (see "spec.baremetalSetTemplate.bmhLabelSelector", which can be changed if you wish to use
+#    a different label for BareMetalHost selection).
 #
 
 apiVersion: dataplane.openstack.org/v1beta1
@@ -21,6 +31,16 @@ metadata:
   name: openstack-edpm-ipam
   namespace: openstack
 spec:
+  baremetalSetTemplate:
+    bmhLabelSelector:
+      app: openstack
+    bmhNamespace: openshift-machine-api
+    cloudUserName: cloud-admin
+    ctlplaneInterface: enp3s0
+    passwordSecret:
+      name: baremetalset-password-secret
+      namespace: openstack
+    provisioningInterface: enp1s0
   env:
     - name: ANSIBLE_CALLBACKS_ENABLED
       value: profile_tasks
@@ -35,7 +55,6 @@ spec:
       ansiblePort: 22
       ansibleUser: cloud-admin
       ansibleVars:
-        # CHANGEME
         edpm_chrony_ntp_servers:
           - clock.redhat.com
         # CHANGEME -- see https://access.redhat.com/solutions/253273
@@ -45,7 +64,6 @@ spec:
         edpm_iscsid_image: '{{ registry_url }}/openstack-iscsid:{{ image_tag }}'
         edpm_logrotate_crond_image: '{{ registry_url }}/openstack-cron:{{ image_tag }}'
         edpm_network_config_hide_sensitive_logs: false
-        # CHANGEME (network_config[0].members[0].name) ---v
         edpm_network_config_template: |
           ---
           {% set mtu_list = [ctlplane_mtu] %}
@@ -65,7 +83,7 @@ spec:
             routes: {{ ctlplane_host_routes }}
             members:
             - type: interface
-              name: enp7s0
+              name: enp3s0
               mtu: {{ min_viable_mtu }}
               # force the MAC address of the bridge to this interface
               primary: true
@@ -86,7 +104,7 @@ spec:
         edpm_ovn_controller_agent_image: '{{ registry_url }}/openstack-ovn-controller:{{ image_tag }}'
         edpm_selinux_mode: enforcing
         edpm_sshd_allowed_ranges:
-          - 192.168.122.0/24 # CHANGEME
+          - 192.168.122.0/24
         edpm_sshd_configure_firewall: true
         enable_debug: false
         gather_facts: false
@@ -105,8 +123,8 @@ spec:
           - ceph_nfs
           - ceph_rgw_frontend
           - ceph_nfs_frontend
-        storage_mtu: 9000
-        storage_mgmt_mtu: 9000
+        storage_mtu: 1500
+        storage_mgmt_mtu: 1500
         storage_mgmt_vlan_id: 23
         storage_mgmt_cidr: "24"
         storage_mgmt_host_routes: []
@@ -126,64 +144,17 @@ spec:
         subnetName: subnet1
   nodes:
     edpm-compute-0:
-      ansible:
-        ansibleHost: 192.168.122.100 # CHANGEME
       hostName: edpm-compute-0
-      networks:
-      - defaultRoute: true
-        fixedIP: 192.168.122.100 # CHANGEME
-        name: CtlPlane
-        subnetName: subnet1
-      - name: InternalApi
-        subnetName: subnet1
-      - name: Storage
-        subnetName: subnet1
-      - name: StorageMgmt
-        subnetName: subnet1
-      - name: Tenant
-        subnetName: subnet1
     edpm-compute-1:
-      ansible:
-        ansibleHost: 192.168.122.101 # CHANGEME
       hostName: edpm-compute-1
-      networks:
-      - defaultRoute: true
-        fixedIP: 192.168.122.101 # CHANGEME
-        name: CtlPlane
-        subnetName: subnet1
-      - name: InternalApi
-        subnetName: subnet1
-      - name: Storage
-        subnetName: subnet1
-      - name: StorageMgmt
-        subnetName: subnet1
-      - name: Tenant
-        subnetName: subnet1
     edpm-compute-2:
-      ansible:
-        ansibleHost: 192.168.122.102 # CHANGEME
       hostName: edpm-compute-2
-      networks:
-      - defaultRoute: true
-        fixedIP: 192.168.122.102 # CHANGEME
-        name: CtlPlane
-        subnetName: subnet1
-      - name: InternalApi
-        subnetName: subnet1
-      - name: Storage
-        subnetName: subnet1
-      - name: StorageMgmt
-        subnetName: subnet1
-      - name: Tenant
-        subnetName: subnet1
-  preProvisioned: true
   # Each OpenStackDataPlaneDeployment will override
   # the services list so that only a subset of them
   # are deployed during different phases. The full
   # service list is defined here so that each service
   # will be created by the dataplane-operator.
   services:
-    - bootstrap
     - configure-network
     - validate-network
     - install-os
