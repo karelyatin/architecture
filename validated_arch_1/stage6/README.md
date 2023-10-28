@@ -19,7 +19,7 @@ oc apply -f image_conversion_pvc.yaml
 3. Update OpenStackControlPlane and wait for it to finish
 ```bash
 oc apply -f openstackcontrolplane.yaml
-oc wait osctlplane openstack-galera-network-isolation-3replicas --for condition=Ready --timeout=300s
+oc wait osctlplane openstack-galera-network-isolation --for condition=Ready --timeout=600s
 ```
 4. Update OpenStackDataPlaneNodeSet
 ```bash

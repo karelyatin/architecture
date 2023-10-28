@@ -19,5 +19,5 @@ oc apply -f osp-secrets.yaml
 4. Create OpenStackControlPlane and wait for it to finish deploying
 ```bash
 oc apply -f openstackcontrolplane.yaml
-oc wait osctlplane openstack-galera-network-isolation-3replicas --for condition=Ready --timeout=600s
+oc wait osctlplane openstack-galera-network-isolation --for condition=Ready --timeout=600s
 ```
