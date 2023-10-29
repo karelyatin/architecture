@@ -1,6 +1,3 @@
-#
-# CHANGEME:
-#
 # - Change "spec.dns.template.options[0].values[0]" to match the IP of your upstream DNS server
 # - Change "spec.dns.template.override.service.metadata.annotations["metallb.universe.tf/loadBalancerIPs"]"
 #   to match the VIP for your ctlplane network, if necessary
@@ -74,7 +71,7 @@ spec:
             rbd_user=openstack
             rbd_pool=volumes
             rbd_flatten_volume_from_snapshot=False
-            rbd_secret_uuid=	2540551a-6df0-11ee-9ebb-008bc5880075 # CHANGEME
+            rbd_secret_uuid=CHANGEME
   glance:
     apiOverride:
       route: {}

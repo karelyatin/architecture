@@ -1,6 +1,3 @@
-#
-# CHANGEME:
-#
 # - Change the "data['03-ceph-nova.conf']"'s "rbd_secret_uuid" to match that of your Ceph
 #   cluster's FSID, which can be acquired like so, once the "ceph_secret.yaml" has been
 #   created in this same stage:
@@ -13,7 +10,6 @@ kind: ConfigMap
 metadata:
   name: ceph-nova
 data:
-  # CHANGEME (rbd_secret_uuid) ---v
   03-ceph-nova.conf: |
     [libvirt]
     images_type=rbd
@@ -23,7 +19,7 @@ data:
     images_rbd_glance_copy_poll_interval=15
     images_rbd_glance_copy_timeout=600
     rbd_user=openstack
-    rbd_secret_uuid=# CHANGEME
+    rbd_secret_uuid=CHANGEME
 ---
 apiVersion: dataplane.openstack.org/v1beta1
 kind: OpenStackDataPlaneService
