@@ -12,8 +12,8 @@ metadata:
   name: image-import-staging
 spec:
   accessModes:
-  - ReadWriteMany
+  - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi  # CHANGEME
+      storage: 20Gi  # CHANGEME
   storageClassName: local-storage
