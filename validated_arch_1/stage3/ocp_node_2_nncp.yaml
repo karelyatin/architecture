@@ -9,8 +9,6 @@ metadata:
   labels:
     osp/interface: enp3s0
   name: enp3s0-master-2
-  resourceVersion: "30003"
-  uid: eb9036df-28fe-4d1b-91b3-911f8ccd97ab
 spec:
   desiredState:
     dns-resolver:
