@@ -1,4 +1,7 @@
-#
+# IF you are following the brno-ci-framework-hackathon Manual.md,
+# then do NOT apply this CR.
+# Intead use openstackdataplanenodeset-extra-mounts.yaml in brno-ci-framework-hackathon repo
+
 # CHANGEME:
 #
 # Make the same changes here that you made to openstackdataplanenodeset.yaml from stage 5

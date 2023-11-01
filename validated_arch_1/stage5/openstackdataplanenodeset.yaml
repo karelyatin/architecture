@@ -1,4 +1,7 @@
-#
+# IF you are following the brno-ci-framework-hackathon Manual.md,
+# then do NOT apply this CR.
+# Intead use openstackdataplanenodeset.yaml in brno-ci-framework-hackathon repo
+
 # CHANGEME:
 #
 # - Change "spec.baremetalSetTemplate.ctlplaneInterface" to be the control plane
