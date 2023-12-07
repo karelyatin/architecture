@@ -12,7 +12,7 @@ spec:
   ipAddressPools:
   - ctlplane
   interfaces:
-  - enp3s0
+  - ospbr
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement

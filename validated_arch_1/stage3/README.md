@@ -12,7 +12,7 @@ oc wait nncp -l osp/interface=enp3s0 --for condition=available --timeout=300s
 ```
 2. Create NetAttachs
 ```bash
-oc apply -f netattach_ctlplane.yaml -f netattach_internalapi.yaml -f netattach_storage.yaml -f netattach_tenant.yaml
+oc apply -f netattach_ctlplane.yaml -f netattach_internalapi.yaml -f netattach_storage.yaml -f netattach_tenant.yaml -f netattach_datacentre.yaml
 ```
 3. Create MetalLB resources
 
