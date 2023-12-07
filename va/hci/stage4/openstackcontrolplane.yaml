@@ -251,7 +251,11 @@ spec:
   ovn:
     template:
       ovnController:
+        external-ids:
+          enable-chassis-as-gateway: true
         networkAttachment: tenant
+        nicMappings:
+          datacentre: ospbr
       ovnDBCluster:
         ovndbcluster-nb:
           dbType: NB

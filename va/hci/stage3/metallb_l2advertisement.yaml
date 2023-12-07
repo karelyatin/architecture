@@ -12,8 +12,7 @@ spec:
   ipAddressPools:
   - ctlplane
   interfaces:
-  # Change this interface to the appropriate OpenStack NIC for your environment
-  - enp7s0 # CHANGEME
+  - ospbr
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement

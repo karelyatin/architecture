@@ -20,7 +20,7 @@ spec:
       config:
       - destination: 0.0.0.0/0
         next-hop-address: 192.168.122.1 # CHANGEME
-        next-hop-interface: enp7s0 # CHANGEME
+        next-hop-interface: ospbr
     interfaces:
     - description: internalapi vlan interface
       ipv4:
@@ -67,7 +67,12 @@ spec:
       vlan:
         base-iface: enp7s0 # CHANGEME
         id: 22
-    - description: Configuring enp7s0 # CHANGEME
+    - description: primary interface
+      mtu: 9000
+      name: enp7s0 # CHANGEME
+      state: up
+      type: ethernet
+    - description: Configuring ospbr linux-bridge
       ipv4:
         address:
         - ip: 192.168.122.12 # CHANGEME
@@ -77,9 +82,16 @@ spec:
       ipv6:
         enabled: false
       mtu: 9000
-      name: enp7s0 # CHANGEME
+      name: ospbr
+      bridge:
+        options:
+          stp:
+            enabled: false
+        port:
+          - name: enp7s0 # CHANGEME
+            vlan: {}
       state: up
-      type: ethernet
+      type: linux-bridge
   nodeSelector:
     kubernetes.io/hostname: ostest-master-2 # CHANGEME
     node-role.kubernetes.io/worker: ""
