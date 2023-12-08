@@ -71,7 +71,7 @@ spec:
             rbd_user=openstack
             rbd_pool=volumes
             rbd_flatten_volume_from_snapshot=False
-            rbd_secret_uuid=CHANGEME
+            rbd_secret_uuid=ead188f1-4dfa-5528-a26d-c0ebbfb7bb02
   glance:
     apiOverride:
       route: {}

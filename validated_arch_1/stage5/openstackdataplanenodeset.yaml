@@ -1,49 +1,9 @@
-# IF you are following the brno-ci-framework-hackathon Manual.md,
-# then do NOT apply this CR.
-# Intead use openstackdataplanenodeset.yaml in brno-ci-framework-hackathon repo
-
-# CHANGEME:
-#
-# - Change "spec.baremetalSetTemplate.ctlplaneInterface" to be the control plane
-#   interface on your compute nodes
-# - Change "spec.baremetalSetTemplate.provisioningInterface" to be the provisioning
-#   interface used by Metal3 on your OpenShift nodes
-# - Change the interface name specified in "spec.nodeTemplate.ansible.ansibleVars.edpm_network_config_template"
-#   to be the control plane interface on your compute nodes
-#     i.e.
-#     members:
-#     - type: interface
-#       name: enp7s0    <---- change
-# - Change "spec.nodeTemplate.ansible.ansibleVars.edpm_sshd_allowed_ranges[0]" to 
-#   match the CIDR of your control plane network, if necessary
-# - Change "edpm_bootstrap_command" to include subscription-manager and podman login
-#   commands to register the EDPM nodes as in https://access.redhat.com/solutions/253273
-#
-# EXTERNAL DEPENDENCIES:
-#
-# - "spec.nodes" lists 3 nodes that will require 3 metal3.io/v1alpha1 BareMetalHost resources, 
-#   which are the user's responsibility to have added to the cluster ahead of time.  They also 
-#   must be labelled "app: openstack" for the purposes of this OpenStackDataPlaneNodeSet
-#   (see "spec.baremetalSetTemplate.bmhLabelSelector", which can be changed if you wish to use
-#    a different label for BareMetalHost selection).
-#
-
 apiVersion: dataplane.openstack.org/v1beta1
 kind: OpenStackDataPlaneNodeSet
 metadata:
   name: openstack-edpm-ipam
   namespace: openstack
 spec:
-  baremetalSetTemplate:
-    bmhLabelSelector:
-      app: openstack
-    bmhNamespace: openshift-machine-api
-    cloudUserName: cloud-admin
-    ctlplaneInterface: enp3s0
-    passwordSecret:
-      name: baremetalset-password-secret
-      namespace: openstack
-    provisioningInterface: enp1s0
   env:
     - name: ANSIBLE_CALLBACKS_ENABLED
       value: profile_tasks
@@ -56,17 +16,15 @@ spec:
   nodeTemplate:
     ansible:
       ansiblePort: 22
-      ansibleUser: cloud-admin
+      ansibleUser: zuul
       ansibleVars:
+        # CHANGEME
         edpm_chrony_ntp_servers:
           - clock.redhat.com
-        # CHANGEME -- see https://access.redhat.com/solutions/253273
-        # edpm_bootstrap_command: |
-        #       subscription-manager register --username <subscription_manager_username> --password <subscription_manager_password>
-        #       podman login -u <registry_username> -p <registry_password> registry.redhat.io
         edpm_iscsid_image: '{{ registry_url }}/openstack-iscsid:{{ image_tag }}'
         edpm_logrotate_crond_image: '{{ registry_url }}/openstack-cron:{{ image_tag }}'
         edpm_network_config_hide_sensitive_logs: false
+        # CHANGEME (network_config[0].members[0].name) ---v
         edpm_network_config_template: |
           ---
           {% set mtu_list = [ctlplane_mtu] %}
@@ -86,7 +44,7 @@ spec:
             routes: {{ ctlplane_host_routes }}
             members:
             - type: interface
-              name: enp3s0
+              name: eth1
               mtu: {{ min_viable_mtu }}
               # force the MAC address of the bridge to this interface
               primary: true
@@ -108,6 +66,7 @@ spec:
         edpm_selinux_mode: enforcing
         edpm_sshd_allowed_ranges:
           - 192.168.122.0/24
+          - 192.168.111.0/24
         edpm_sshd_configure_firewall: true
         enable_debug: false
         gather_facts: false
@@ -204,6 +163,7 @@ spec:
   # service list is defined here so that each service
   # will be created by the dataplane-operator.
   services:
+    - repo-setup
     - bootstrap
     - configure-network
     - validate-network

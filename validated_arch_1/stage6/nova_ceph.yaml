@@ -19,7 +19,7 @@ data:
     images_rbd_glance_copy_poll_interval=15
     images_rbd_glance_copy_timeout=600
     rbd_user=openstack
-    rbd_secret_uuid=CHANGEME
+    rbd_secret_uuid=ead188f1-4dfa-5528-a26d-c0ebbfb7bb02
 ---
 apiVersion: dataplane.openstack.org/v1beta1
 kind: OpenStackDataPlaneService

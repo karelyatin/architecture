@@ -1,16 +1,8 @@
-#
-# CHANGEME:
-#
-# - Change "data['ssh-privatekey']" to be the base64-encoded private key you would
-#   use for a potential future migration
-# - Change "data['ssh-publickey']" to be the base64-encoded public key you would
-#   use for a potential future migration
-#
-
+---
 apiVersion: v1
 data:
-  ssh-privatekey: # CHANGEME
-  ssh-publickey: # CHANGEME
+  ssh-privatekey: LS0tLS1CRUdJTiBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0KYjNCbGJuTnphQzFyWlhrdGRqRUFBQUFBQkc1dmJtVUFBQUFFYm05dVpRQUFBQUFBQUFBQkFBQUFNd0FBQUF0emMyZ3RaVwpReU5UVXhPUUFBQUNEQ3ZhSjMxUHhyWFdYRk1BM0x3bTdiWlczZVBuWHNQZnQzdVR3L2NNOENwQUFBQUxpL1FIeTl2MEI4CnZRQUFBQXR6YzJndFpXUXlOVFV4T1FBQUFDREN2YUozMVB4clhXWEZNQTNMd203YlpXM2VQblhzUGZ0M3VUdy9jTThDcEEKQUFBRUJ5UDlmaEtKcE9KNm01NG9DQ0I3RmxRaHRDOFMwUkNjMnFzNWlCbExJak44SzlvbmZVL0d0ZFpjVXdEY3ZDYnR0bApiZDQrZGV3OSszZTVQRDl3endLa0FBQUFOVzlqY0Y5a1pYWkFZVzV6YVdKc1pTMW1lREl0TXk1MGNtbHdiR1Z2TG14aFlpCjVsYm1jdWNtUjFNaTV5WldSb1lYUXVZMjl0Ci0tLS0tRU5EIE9QRU5TU0ggUFJJVkFURSBLRVktLS0tLQo=
+  ssh-publickey: c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSU1LOW9uZlUvR3RkWmNVd0RjdkNidHRsYmQ0K2RldzkrM2U1UEQ5d3p3S2sgb2NwX2RldkBhbnNpYmxlLWZ4Mi0zLnRyaXBsZW8ubGFiLmVuZy5yZHUyLnJlZGhhdC5jb20K
 kind: Secret
 metadata:
   name: nova-migration-ssh-key
