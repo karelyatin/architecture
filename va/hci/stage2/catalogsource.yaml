@@ -4,5 +4,5 @@ metadata:
   name: openstack-operator-index
   namespace: openstack-operators
 spec:
-  image: quay.io/openstack-k8s-operators/openstack-operator-index:latest
+  image: quay.rdoproject.org/openstack-k8s-operators/openstack-operator-index:be3515e4de69731348b96cb76d9a3701ab707746
   sourceType: grpc

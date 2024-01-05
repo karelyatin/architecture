@@ -1,0 +1,23 @@
+#oc patch $(oc get oscp -o name) --type=merge --patch-file=openstackcontrolplane_patch.yaml
+spec:
+  keystone:
+    template:
+      replicas: 3
+  neutron:
+    apiOverride:
+      route:
+        metadata:
+          annotations:
+            haproxy.router.openshift.io/timeout: 120s
+    template:
+      replicas: 3
+      customServiceConfig: |
+        [DEFAULT]
+        api_workers = 4
+  ovn:
+    template:
+      ovnDBCluster:
+        ovndbcluster-nb:
+          replicas: 3
+        ovndbcluster-sb:
+          replicas: 3

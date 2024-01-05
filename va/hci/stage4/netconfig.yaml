@@ -12,27 +12,27 @@ metadata:
   namespace: openstack
 spec:
   networks:
-    - dnsDomain: ctlplane.example.com
+    - dnsDomain: ctlplane.ocp.openstack.lab
       name: CtlPlane
       subnets:
         - allocationRanges:
-            - end: 192.168.122.120 # CHANGEME
-              start: 192.168.122.100 # CHANGEME
-            - end: 192.168.122.200 # CHANGEME
-              start: 192.168.122.150 # CHANGEME
-          cidr: 192.168.122.0/24 # CHANGEME
-          gateway: 192.168.122.1 # CHANGEME
+            - end: 192.168.24.120 # CHANGEME
+              start: 192.168.24.100 # CHANGEME
+            - end: 192.168.24.200 # CHANGEME
+              start: 192.168.24.150 # CHANGEME
+          cidr: 192.168.24.0/24 # CHANGEME
+          gateway: 192.168.24.1 # CHANGEME
           name: subnet1
-    - dnsDomain: internalapi.example.com
+    - dnsDomain: internalapi.ocp.openstack.lab
       name: InternalApi
       subnets:
         - allocationRanges:
-            - end: 172.17.0.250
-              start: 172.17.0.100
-          cidr: 172.17.0.0/24
+            - end: 172.17.1.250
+              start: 172.17.1.100
+          cidr: 172.17.1.0/24
           name: subnet1
-          vlan: 20
-    - dnsDomain: external.example.com
+          vlan: 301
+    - dnsDomain: external.ocp.openstack.lab
       name: External
       subnets:
         - allocationRanges:
@@ -41,32 +41,30 @@ spec:
           cidr: 10.0.0.0/24
           gateway: 10.0.0.1
           name: subnet1
-    - dnsDomain: storage.example.com
+    - dnsDomain: storage.ocp.openstack.lab
       name: Storage
       subnets:
         - allocationRanges:
-            - end: 172.18.0.250
-              start: 172.18.0.100
-          cidr: 172.18.0.0/24
+            - end: 172.17.3.250
+              start: 172.17.3.100
+          cidr: 172.17.3.0/24
           name: subnet1
-          vlan: 21
-      mtu: 9000
-    - dnsDomain: storagemgmt.example.com
+          vlan: 302
+    - dnsDomain: storagemgmt.ocp.openstack.lab
       name: StorageMgmt
       subnets:
         - allocationRanges:
-            - end: 172.20.0.250
-              start: 172.20.0.100
-          cidr: 172.20.0.0/24
+            - end: 172.17.4.250
+              start: 172.17.4.100
+          cidr: 172.17.4.0/24
           name: subnet1
-          vlan: 23
-      mtu: 9000
-    - dnsDomain: tenant.example.com
+          vlan: 303
+    - dnsDomain: tenant.ocp.openstack.lab
       name: Tenant
       subnets:
         - allocationRanges:
-            - end: 172.19.0.250
-              start: 172.19.0.100
-          cidr: 172.19.0.0/24
+            - end: 172.17.2.250
+              start: 172.17.2.100
+          cidr: 172.17.2.0/24
           name: subnet1
-          vlan: 22
+          vlan: 304
