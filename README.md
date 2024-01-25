@@ -1,35 +1,24 @@
-# OpenStack K8S Operators Architectures
+# OpenShift Clients
 
-This repository contains templates used a a part of the validated architecture
-(VA) and deployment topology (DT) effort.
+The OpenShift client `oc` simplifies working with Kubernetes and OpenShift
+clusters, offering a number of advantages over `kubectl` such as easy login,
+kube config file management, and access to developer tools. The `kubectl`
+binary is included alongside for when strict Kubernetes compliance is necessary.
 
-Validated architectures and deployment topologies are represented as kustomize
-compatible templates and custom resources.
+To learn more about OpenShift, visit [docs.openshift.com](https://docs.openshift.com)
+and select the version of OpenShift you are using.
 
-Deployment topologies are only to be used for testing environments. Validated
-architectures are intended to represent production-style deployment
-environments.
+## Installing the tools
 
-## Requirements
+After extracting this archive, move the `oc` and `kubectl` binaries
+to a location on your PATH such as `/usr/local/bin`. Then run:
 
-The templating provided here requires [kustomize](https://kustomize.io/)
-version 5.0.1 or higher.
+    oc login [API_URL]
 
-## Understanding the repository layout
+to start a session against an OpenShift cluster. After login, run `oc` and
+`oc help` to learn more about how to get started with OpenShift.
 
-The architecture layout is made up of three main layers:
+## License
 
-1. Base templates in `lib/` directory that are common to all VAs and DTs.
-2. VA and DT specific templates in `va/*` and `dt/*` directories that are
-   specific to a given VA or DT.
-3. User-environment templates and values in `examples/va/*` and `examples/dt/*`
-   directories that are specific to a given VA or DT. These user-environment
-   templates are expected to be modified to match the users unique environment.
-
-## Validated Architectures
-
-The following VAs are available.
-
-- [Hyperconverged OpenStack and Ceph](examples/va/hci/)
-- [Network Functions Virtualization with SRIOV](examples/va/nfv/sriov/)
-- [Network Functions Virtualization with OvS DPDK](examples/va/nfv/ovs-dpdk/)
+OpenShift is licensed under the Apache Public License 2.0. The source code for this
+program is [located on github](https://github.com/openshift/oc).
