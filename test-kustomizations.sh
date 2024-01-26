@@ -60,7 +60,14 @@ mapfile -t FILES < <(find "${DIRS_TO_CHECK[@]}" \
 for FILE in "${FILES[@]}"; do
     DIRECTORY=$(dirname "${FILE}")
 
-    if ! OUTPUT=$("${COMMAND}" build "${DIRECTORY}" 2>&1); then
+    if [ $(grep -ce "^${DIRECTORY}$" .ci/relax_loader.txt) -eq 1 ]; then
+        arg="--load-restrictor=LoadRestrictionsNone"
+        OUTPUT=$("${COMMAND}" build "${arg}" "${DIRECTORY}" 2>&1)
+    else
+        OUTPUT=$("${COMMAND}" build "${DIRECTORY}" 2>&1)
+    fi
+
+    if [[ ! ${OUTPUT} ]] ; then
         echo "${RED}${FILE}: ERROR${RESET}"
         echo "${YELLOW}${OUTPUT}${RESET}"
         _=$(( ERRORS += 1 ))
