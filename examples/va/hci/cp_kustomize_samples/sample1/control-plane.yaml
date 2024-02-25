@@ -1,0 +1,389 @@
+apiVersion: v1
+data:
+  AdminPassword: MTIzNDU2Nzg=
+  CeilometerPassword: MTIzNDU2Nzg=
+  CinderDatabasePassword: MTIzNDU2Nzg=
+  CinderPassword: MTIzNDU2Nzg=
+  DatabasePassword: MTIzNDU2Nzg=
+  DbRootPassword: MTIzNDU2Nzg=
+  DesignateDatabasePassword: MTIzNDU2Nzg=
+  DesignatePassword: MTIzNDU2Nzg=
+  GlanceDatabasePassword: MTIzNDU2Nzg=
+  GlancePassword: MTIzNDU2Nzg=
+  HeatAuthEncryptionKey: NzY3YzNlZDA1NmNiYWEzYjlkZmVkYjhjNmY4MjViZjA=
+  HeatDatabasePassword: MTIzNDU2Nzg=
+  HeatPassword: MTIzNDU2Nzg=
+  IronicDatabasePassword: MTIzNDU2Nzg=
+  IronicInspectorDatabasePassword: MTIzNDU2Nzg=
+  IronicInspectorPassword: MTIzNDU2Nzg=
+  IronicPassword: MTIzNDU2Nzg=
+  KeystoneDatabasePassword: MTIzNDU2Nzg=
+  ManilaDatabasePassword: MTIzNDU2Nzg=
+  ManilaPassword: MTIzNDU2Nzg=
+  MetadataSecret: MTIzNDU2Nzg0Mg==
+  NeutronDatabasePassword: MTIzNDU2Nzg=
+  NeutronPassword: MTIzNDU2Nzg=
+  NovaAPIDatabasePassword: MTIzNDU2Nzg=
+  NovaCell0DatabasePassword: MTIzNDU2Nzg=
+  NovaCell1DatabasePassword: MTIzNDU2Nzg=
+  NovaPassword: MTIzNDU2Nzg=
+  OctaviaDatabasePassword: MTIzNDU2Nzg=
+  OctaviaPassword: MTIzNDU2Nzg=
+  PlacementDatabasePassword: MTIzNDU2Nzg=
+  PlacementPassword: MTIzNDU2Nzg=
+  SwiftPassword: MTIzNDU2Nzg=
+kind: Secret
+metadata:
+  name: osp-secret
+  namespace: openstack
+type: Opaque
+---
+apiVersion: core.openstack.org/v1beta1
+kind: OpenStackControlPlane
+metadata:
+  name: controlplane
+  namespace: openstack
+spec:
+  ceilometer:
+    enabled: false
+    template:
+      passwordSelector:
+        service: CeilometerPassword
+      secret: osp-secret
+      serviceUser: ceilometer
+  cinder:
+    apiOverride:
+      route: {}
+    enabled: false
+    template:
+      cinderAPI:
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+                  metallb.universe.tf/allow-shared-ip: internalapi
+                  metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+              spec:
+                type: LoadBalancer
+      cinderBackup:
+        networkAttachments:
+        - storage
+        replicas: 0
+      cinderScheduler:
+        replicas: 1
+      cinderVolumes: {}
+      databaseInstance: openstack
+      secret: osp-secret
+  dns:
+    template:
+      options:
+      - key: server
+        values:
+        - 192.168.122.1
+      override:
+        service:
+          metadata:
+            annotations:
+              metallb.universe.tf/address-pool: ctlplane
+              metallb.universe.tf/allow-shared-ip: ctlplane
+              metallb.universe.tf/loadBalancerIPs: 192.168.122.80
+          spec:
+            type: LoadBalancer
+      replicas: 1
+  galera:
+    enabled: true
+    templates:
+      openstack:
+        replicas: 3
+        secret: osp-secret
+        storageRequest: 500M
+      openstack-cell1:
+        replicas: 3
+        secret: osp-secret
+        storageRequest: 500M
+  glance:
+    apiOverrides:
+      default:
+        route: {}
+    enabled: false
+    template:
+      databaseInstance: openstack
+      glanceAPIs:
+        default:
+          networkAttachments:
+          - storage
+          override:
+            service:
+              internal:
+                metadata:
+                  annotations:
+                    metallb.universe.tf/address-pool: internalapi
+                    metallb.universe.tf/allow-shared-ip: internalapi
+                    metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+                spec:
+                  type: LoadBalancer
+          replicas: 1
+          type: single
+      storageClass: local-storage
+      storageRequest: 10G
+  heat:
+    apiOverride:
+      route: {}
+    cnfAPIOverride:
+      route: {}
+    enabled: false
+    template:
+      databaseInstance: openstack
+      heatAPI:
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+                  metallb.universe.tf/allow-shared-ip: internalapi
+                  metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+              spec:
+                type: LoadBalancer
+        replicas: 1
+      heatEngine:
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+                  metallb.universe.tf/allow-shared-ip: internalapi
+                  metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+              spec:
+                type: LoadBalancer
+        replicas: 1
+      secret: osp-secret
+  horizon:
+    apiOverride:
+      route: {}
+    enabled: false
+    template:
+      replicas: 1
+      secret: osp-secret
+  ironic:
+    enabled: false
+    template:
+      databaseInstance: openstack
+      ironicAPI:
+        replicas: 1
+      ironicConductors:
+      - replicas: 1
+        storageRequest: 10G
+      ironicInspector:
+        replicas: 1
+      ironicNeutronAgent:
+        replicas: 1
+      secret: osp-secret
+  keystone:
+    apiOverride:
+      route: {}
+    enabled: true
+    template:
+      databaseInstance: openstack
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+                metallb.universe.tf/allow-shared-ip: internalapi
+                metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+            spec:
+              type: LoadBalancer
+      secret: osp-secret
+  manila:
+    apiOverride:
+      route: {}
+    enabled: false
+    template:
+      manilaAPI:
+        networkAttachments:
+        - internalapi
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+                  metallb.universe.tf/allow-shared-ip: internalapi
+                  metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+              spec:
+                type: LoadBalancer
+        replicas: 1
+      manilaScheduler:
+        replicas: 1
+      manilaShares:
+        share1:
+          networkAttachments:
+          - storage
+          replicas: 1
+  mariadb:
+    enabled: false
+    templates:
+      openstack:
+        storageRequest: 500M
+      openstack-cell1:
+        storageRequest: 500M
+  memcached:
+    enabled: true
+    templates:
+      memcached:
+        replicas: 1
+  neutron:
+    apiOverride:
+      route: {}
+    enabled: false
+    template:
+      databaseInstance: openstack
+      networkAttachments:
+      - internalapi
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+                metallb.universe.tf/allow-shared-ip: internalapi
+                metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+            spec:
+              type: LoadBalancer
+      secret: osp-secret
+  nova:
+    apiOverride:
+      route: {}
+    enabled: false
+    template:
+      apiServiceTemplate:
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+                  metallb.universe.tf/allow-shared-ip: internalapi
+                  metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+              spec:
+                type: LoadBalancer
+      metadataServiceTemplate:
+        override:
+          service:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+                metallb.universe.tf/allow-shared-ip: internalapi
+                metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+            spec:
+              type: LoadBalancer
+      secret: osp-secret
+  octavia:
+    enabled: false
+    template:
+      databaseInstance: openstack
+      octaviaAPI:
+        replicas: 1
+      secret: osp-secret
+  ovn:
+    enabled: false
+    template:
+      ovnController:
+        networkAttachment: tenant
+        nicMappings:
+          datacentre: ospbr
+      ovnDBCluster:
+        ovndbcluster-nb:
+          dbType: NB
+          networkAttachment: internalapi
+          storageRequest: 10G
+        ovndbcluster-sb:
+          dbType: SB
+          networkAttachment: internalapi
+          storageRequest: 10G
+      ovnNorthd:
+        networkAttachment: internalapi
+  placement:
+    apiOverride:
+      route: {}
+    enabled: false
+    template:
+      databaseInstance: openstack
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+                metallb.universe.tf/allow-shared-ip: internalapi
+                metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+            spec:
+              type: LoadBalancer
+      secret: osp-secret
+  rabbitmq:
+    enabled: true
+    templates:
+      rabbitmq:
+        override:
+          service:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+                metallb.universe.tf/loadBalancerIPs: 172.17.0.85
+            spec:
+              type: LoadBalancer
+        replicas: 1
+        resources:
+          limits:
+            cpu: "100m"
+            memory: 500Mi
+          requests:
+            cpu: "100m"
+            memory: 500Mi
+      rabbitmq-cell1:
+        override:
+          service:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+                metallb.universe.tf/loadBalancerIPs: 172.17.0.86
+            spec:
+              type: LoadBalancer
+        replicas: 1
+        resources:
+          limits:
+            cpu: "100m"
+            memory: 500Mi
+          requests:
+            cpu: "100m"
+            memory: 500Mi
+  redis:
+    enabled: false
+  secret: osp-secret
+  storageClass: local-storage
+  swift:
+    enabled: false
+    proxyOverride:
+      route: {}
+    template:
+      swiftProxy:
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+                  metallb.universe.tf/allow-shared-ip: internalapi
+                  metallb.universe.tf/loadBalancerIPs: 172.17.0.80
+              spec:
+                type: LoadBalancer
+        replicas: 1
+      swiftRing:
+        ringReplicas: 1
+      swiftStorage:
+        replicas: 1

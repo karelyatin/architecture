@@ -8,23 +8,11 @@ metadata:
 data:
   # nodes
   node_0:
-    name: ostest-master-0
+    name: crc
     internalapi_ip: 172.17.0.5
     tenant_ip: 172.19.0.5
     ctlplane_ip: 192.168.122.10
     storage_ip: 172.18.0.5
-  node_1:
-    name: ostest-master-1
-    internalapi_ip: 172.17.0.6
-    tenant_ip: 172.19.0.6
-    ctlplane_ip: 192.168.122.11
-    storage_ip: 172.18.0.6
-  node_2:
-    name: ostest-master-2
-    internalapi_ip: 172.17.0.7
-    tenant_ip: 172.19.0.7
-    ctlplane_ip: 192.168.122.12
-    storage_ip: 172.18.0.7
 
   # networks
   ctlplane:
@@ -39,8 +27,8 @@ data:
         gateway: 192.168.122.1
         name: subnet1
     prefix-length: 24
-    iface: enp7s0
-    mtu: 9000
+    iface: enp6s0
+    mtu: 1500
     lb_addresses:
     - 192.168.122.80-192.168.122.90
     endpoint_annotations:
@@ -73,7 +61,7 @@ data:
     prefix-length: 24
     iface: internalapi
     vlan: 20
-    base_iface: enp7s0
+    base_iface: enp6s0
     lb_addresses:
     - 172.17.0.80-172.17.0.90
     endpoint_annotations:
@@ -102,11 +90,11 @@ data:
         cidr: 172.18.0.0/24
         name: subnet1
         vlan: 21
-    mtu: 9000
+    mtu: 1500
     prefix-length: 24
     iface: storage
     vlan: 21
-    base_iface: enp7s0
+    base_iface: enp6s0
     lb_addresses:
     - 172.18.0.80-172.18.0.90
     net-attach-def: |
@@ -131,7 +119,7 @@ data:
         cidr: 172.20.0.0/24
         name: subnet1
         vlan: 23
-    mtu: 9000
+    mtu: 1500
   tenant:
     dnsDomain: tenant.example.com
     subnets:
@@ -145,7 +133,7 @@ data:
     prefix-length: 24
     iface: tenant
     vlan: 22
-    base_iface: enp7s0
+    base_iface: enp6s0
     lb_addresses:
     - 172.19.0.80-172.19.0.90
     net-attach-def: |
@@ -192,10 +180,7 @@ data:
           - 192.168.122.1
 
   routes:
-    config:
-    - destination: 0.0.0.0/0
-      next-hop-address: 192.168.122.1
-      next-hop-interface: enp7s0
+    config: []
 
   rabbitmq:
     endpoint_annotations:
@@ -207,5 +192,5 @@ data:
       metallb.universe.tf/loadBalancerIPs: 172.17.0.86
 
   lbServiceType: LoadBalancer
-  storageClass: host-nfs-storageclass
+  storageClass: local-storage
   bridgeName: ospbr
