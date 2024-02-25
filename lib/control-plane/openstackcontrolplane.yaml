@@ -30,11 +30,11 @@ spec:
     enabled: true
     templates:
       openstack:
-        replicas: 3
+        replicas: 1
         secret: osp-secret
         storageRequest: 500M
       openstack-cell1:
-        replicas: 3
+        replicas: 1
         secret: osp-secret
         storageRequest: 500M
   glance:
@@ -45,7 +45,8 @@ spec:
       databaseInstance: openstack
       glanceAPIs:
         default:
-          replicas: 0
+          replicas: 1
+          type: single
           networkAttachments:
             - storage
       storageClass: _replaced_
@@ -163,9 +164,23 @@ spec:
   rabbitmq:
     templates:
       rabbitmq:
-        replicas: 3
+        replicas: 1
+        resources:
+          limits:
+            cpu: "100m"
+            memory: 500Mi
+          requests:
+            cpu: "100m"
+            memory: 500Mi
       rabbitmq-cell1:
-        replicas: 3
+        replicas: 1
+        resources:
+          limits:
+            cpu: "100m"
+            memory: 500Mi
+          requests:
+            cpu: "100m"
+            memory: 500Mi
   redis:
     enabled: false
   secret: osp-secret

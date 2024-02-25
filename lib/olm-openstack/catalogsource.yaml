@@ -6,3 +6,5 @@ metadata:
 spec:
   image: quay.io/openstack-k8s-operators/openstack-operator-index:latest
   sourceType: grpc
+  displayName: OpenStack Operators
+  publisher: Index Image
