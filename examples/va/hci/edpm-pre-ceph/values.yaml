@@ -15,7 +15,7 @@ data:
     public: CHANGEME3
   nodeset:
     ansible:
-      ansibleUser: cloud-admin
+      ansibleUser: root
       ansiblePort: 22
       ansibleVars:
         timesync_ntp_servers:
@@ -29,7 +29,7 @@ data:
         edpm_network_config_hide_sensitive_logs: false
         edpm_network_config_os_net_config_mappings:
           edpm-compute:
-            nic2: enp7s0
+            nic1: eth0
         edpm_network_config_template: |
           ---
           {% set mtu_list = [ctlplane_mtu] %}
@@ -49,7 +49,7 @@ data:
             routes: {{ ctlplane_host_routes }}
             members:
             - type: interface
-              name: nic2
+              name: nic1
               mtu: {{ min_viable_mtu }}
               # force the MAC address of the bridge to this interface
               primary: true
@@ -89,8 +89,8 @@ data:
           - ceph_nfs
           - ceph_rgw_frontend
           - ceph_nfs_frontend
-        storage_mtu: 9000
-        storage_mgmt_mtu: 9000
+        storage_mtu: 1500
+        storage_mgmt_mtu: 1500
         storage_mgmt_vlan_id: 23
         storage_mgmt_cidr: "24"
         storage_mgmt_host_routes: []
@@ -141,24 +141,8 @@ data:
           subnetName: subnet1
         - name: Tenant
           subnetName: subnet1
-      edpm-compute-2:
-        ansible:
-          ansibleHost: 192.168.122.102
-        hostName: edpm-compute-2
-        networks:
-        - defaultRoute: true
-          fixedIP: 192.168.122.102
-          name: CtlPlane
-          subnetName: subnet1
-        - name: InternalApi
-          subnetName: subnet1
-        - name: Storage
-          subnetName: subnet1
-        - name: StorageMgmt
-          subnetName: subnet1
-        - name: Tenant
-          subnetName: subnet1
     services:
+    - repo-setup
     - bootstrap
     - configure-network
     - validate-network
