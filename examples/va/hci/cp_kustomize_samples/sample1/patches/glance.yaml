@@ -1,0 +1,12 @@
+apiVersion: core.openstack.org/v1beta1
+kind: OpenStackControlPlane
+metadata:
+  name: controlplane
+  namespace: openstack
+spec:
+  glance:
+    enabled: true
+    template:
+      customServiceConfig: |
+        [DEFAULT]
+        debug = True

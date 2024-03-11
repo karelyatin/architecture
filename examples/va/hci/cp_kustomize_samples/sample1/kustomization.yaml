@@ -1,0 +1,25 @@
+resources:
+- control-plane.yaml
+
+patches:
+  - path: patches/glance.yaml
+  - path: patches/ovn.yaml
+  - path: patches/neutron.yaml
+  - target:
+      kind: OpenStackControlPlane
+      name: controlplane
+    patch: |-
+      - op: replace
+        path: /spec/horizon/enabled
+        value: true
+  - patch: |-
+      apiVersion: core.openstack.org/v1beta1
+      kind: OpenStackControlPlane
+      metadata:
+        name: controlplane
+        namespace: openstack
+      spec:
+        placement:
+          enabled: true
+        nova:
+          enabled: true

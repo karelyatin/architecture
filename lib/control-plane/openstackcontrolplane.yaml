@@ -4,12 +4,14 @@ metadata:
   name: controlplane
 spec:
   ceilometer:
+    enabled: false
     template:
       passwordSelector:
         service: CeilometerPassword
       secret: osp-secret
       serviceUser: ceilometer
   cinder:
+    enabled: false
     apiOverride:
       route: {}
     template:
@@ -38,6 +40,7 @@ spec:
         secret: osp-secret
         storageRequest: 500M
   glance:
+    enabled: false
     apiOverrides:
       default:
         route: {}
@@ -70,7 +73,7 @@ spec:
     template:
       replicas: 1
       secret: osp-secret
-    enabled: true
+    enabled: false
   ironic:
     enabled: false
     template:
@@ -86,6 +89,7 @@ spec:
         replicas: 1
       secret: osp-secret
   keystone:
+    enabled: true
     apiOverride:
       route: {}
     template:
@@ -115,10 +119,12 @@ spec:
       openstack-cell1:
         storageRequest: 500M
   memcached:
+    enabled: true
     templates:
       memcached:
         replicas: 1
   neutron:
+    enabled: false
     apiOverride:
       route: {}
     template:
@@ -127,6 +133,7 @@ spec:
         - internalapi
       secret: osp-secret
   nova:
+    enabled: false
     apiOverride:
       route: {}
     template:
@@ -139,6 +146,7 @@ spec:
         replicas: 1
       secret: osp-secret
   ovn:
+    enabled: false
     template:
       ovnController:
         networkAttachment: tenant
@@ -156,12 +164,14 @@ spec:
       ovnNorthd:
         networkAttachment: internalapi
   placement:
+    enabled: false
     apiOverride:
       route: {}
     template:
       databaseInstance: openstack
       secret: osp-secret
   rabbitmq:
+    enabled: true
     templates:
       rabbitmq:
         replicas: 1

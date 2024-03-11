@@ -1,0 +1,10 @@
+apiVersion: dataplane.openstack.org/v1beta1
+kind: OpenStackDataPlaneDeployment
+metadata:
+  name: custom-deployment
+  namespace: openstack
+spec:
+  nodeSets:
+  - openstack-edpm
+  servicesOverride:
+    - custom-service

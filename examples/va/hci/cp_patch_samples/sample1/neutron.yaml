@@ -1,0 +1,13 @@
+# oc patch osctlplane controlplane --type=merge --patch-file=./neutron.yaml
+spec:
+  neutron:
+    apiOverride:
+      route:
+        metadata:
+          annotations:
+            haproxy.router.openshift.io/timeout: 120s
+    template:
+      replicas: 2
+      customServiceConfig: |
+        [DEFAULT]
+        api_workers = 4

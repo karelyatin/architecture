@@ -1,0 +1,17 @@
+apiVersion: dataplane.openstack.org/v1beta1
+kind: OpenStackDataPlaneService
+metadata:
+  name: custom-service
+spec:
+  label: dataplane-deployment-custom-service
+  play: |
+    - hosts: all
+      tasks:
+        - name: Install net-tools
+          ansible.builtin.package:
+            name: net-tools
+            state: present
+          become: true
+        - name: Show OS version
+          debug:
+            msg: "{{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }}"
