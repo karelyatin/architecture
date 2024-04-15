@@ -10,7 +10,7 @@ metadata:
 data:
   cinderVolumes:
     lvm-iscsi:
-      replicas: 1
+      replicas: 0
       nodeSelector:
         openstack.org/cinder-lvm: ""
       customServiceConfig: |
@@ -55,7 +55,7 @@ data:
     enabled: true
 
   octavia:
-    enabled: true
+    enabled: false
     amphoraImageContainerImage: quay.io/gthiemonge/octavia-amphora-image
     apacheContainerImage: registry.redhat.io/ubi9/httpd-24:latest
     octaviaAPI:
@@ -78,7 +78,7 @@ data:
     enabled: true
 
   telemetry:
-    enabled: true
+    enabled: false
     metricStorage:
       enabled: true
     autoscaling:

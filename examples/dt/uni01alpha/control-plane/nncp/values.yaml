@@ -172,6 +172,7 @@ data:
           "range": "172.20.0.0/24",
           "range_start": "172.20.0.30",
           "range_end": "172.20.0.70"
+        }
       }
 
   external:
