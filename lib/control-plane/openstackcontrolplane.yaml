@@ -66,7 +66,8 @@ spec:
       databaseInstance: openstack
       glanceAPIs:
         default:
-          replicas: 0
+          replicas: 1
+          type: single
           networkAttachments:
             - storage
       storage:
