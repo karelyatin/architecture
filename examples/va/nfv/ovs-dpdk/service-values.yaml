@@ -23,8 +23,6 @@ data:
       mechanism_drivers = ovn
       [ovn]
       vhost_sock_dir = /var/lib/vhost_sockets
-      [ml2_type_vlan]
-      network_vlan_ranges = dpdk1:206:209,dpdk2:206:209 # CHANGEME
   ovn:
     ovnController:
       nicMappings:

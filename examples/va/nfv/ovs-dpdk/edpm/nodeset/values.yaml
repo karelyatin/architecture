@@ -11,9 +11,9 @@ data:
   root_password: cmVkaGF0Cg==
   preProvisioned: false
   baremetalSetTemplate:
-    ctlplaneInterface: eno2  # CHANGEME
+    ctlplaneInterface: eno1
     cloudUserName: cloud-admin
-    provisioningInterface: enp1s0  # CHANGEME
+    provisioningInterface: enp5s0
     bmhLabelSelector:
       app: openstack  # CHANGEME
     passwordSecret:
@@ -41,26 +41,9 @@ data:
         # CPU pinning settings
         # edpm nfv ovs dpdk config
         # CHANGEME
-        edpm_kernel_args: "default_hugepagesz=1GB hugepagesz=1G hugepages=64 iommu=pt intel_iommu=on tsx=off isolcpus=2-11,14-23"
-        edpm_tuned_profile: "cpu-partitioning-powersave"
-        edpm_tuned_isolated_cores: "2-11,14-23"
-        edpm_nova_libvirt_qemu_group: "hugetlbfs"
-        edpm_ovs_dpdk_pmd_core_list: "1,13,2,14,3,15"
-        edpm_ovs_dpdk_socket_memory: "4096"
-        edpm_ovs_dpdk_memory_channels: "4"
-        edpm_ovs_dpdk_vhost_postcopy_support: "true"
-        edpm_ovn_bridge_mappings: ['dpdk2:br-link2', 'dpdk1:br-link1']
         # edpm_network_config
         # These vars are edpm_network_config role vars
         edpm_network_config_hide_sensitive_logs: false
-        edpm_network_config_os_net_config_mappings:
-          # Need to provide nic mapping based on system uuid or system product name
-          # here used systetm uuid
-          edpm-compute-0:  # CHANGEME
-            nic1: 6c:fe:54:3f:8a:01  # CHANGEME
-            nic2: 6c:fe:54:3f:8a:02  # CHANGEME
-            nic3: 6c:fe:54:3f:8a:03  # CHANGEME
-            nic4: 6c:fe:54:3f:8a:04  # CHANGEME
         edpm_network_config_template: |
           ---
           {% set mtu_list = [ctlplane_mtu] %}
@@ -77,14 +60,14 @@ data:
             domain: {{ dns_search_domains }}
             addresses:
             - ip_netmask: {{ ctlplane_ip }}/{{ ctlplane_cidr }}
-            routes: {{ ctlplane_host_routes }}
+            routes: []
             members:
             - type: interface
               name: nic2
               mtu: {{ min_viable_mtu }}
               # force the MAC address of the bridge to this interface
               primary: true
-          {% for network in nodeset_networks if network not in ['external', 'tenant'] %}
+          {% for network in nodeset_networks if network not in ['external'] %}
             - type: vlan
               mtu: {{ lookup('vars', networks_lower[network] ~ '_mtu') }}
               vlan_id: {{ lookup('vars', networks_lower[network] ~ '_vlan_id') }}
@@ -92,34 +75,11 @@ data:
               - ip_netmask: {{ lookup('vars', networks_lower[network] ~ '_ip') }}/{{ lookup('vars', networks_lower[network] ~ '_cidr') }}
               routes: {{ lookup('vars', networks_lower[network] ~ '_host_routes') }}
           {% endfor %}
-          - type: ovs_user_bridge
-            name: br-link1
-            use_dhcp: false
-            ovs_extra: "set port br-link1 tag={{ lookup('vars', networks_lower['tenant'] ~ '_vlan_id') }}"
-            addresses:
-            - ip_netmask: {{ lookup('vars', networks_lower['tenant'] ~ '_ip') }}/{{ lookup('vars', networks_lower['tenant'] ~ '_cidr') }}
-            mtu: {{ lookup('vars', networks_lower['tenant'] ~ '_mtu') }}
-            members:
-            - type: ovs_dpdk_port
-              name: dpdk1
-              members:
-              - type: interface
-                name: nic3
-          - type: ovs_user_bridge
-            name: br-link2
-            use_dhcp: false
-            mtu: 9000
-            members:
-            - type: ovs_dpdk_port
-              name: dpdk2
-              members:
-              - type: interface
-                name: nic4
 
         # These vars are for the network config templates themselves and are
         # considered EDPM network defaults.
         neutron_physical_bridge_name: br-ex
-        neutron_public_interface_name: nic1
+        neutron_public_interface_name: nic2
         # edpm_nodes_validation
         edpm_nodes_validation_validate_controllers_icmp: false
         edpm_nodes_validation_validate_gateway_icmp: false
@@ -129,6 +89,7 @@ data:
         edpm_sshd_configure_firewall: true
         edpm_sshd_allowed_ranges:
           - 192.168.122.0/24
+          - 10.9.76.0/24
     networks:
       - defaultRoute: true
         name: ctlplane
@@ -145,10 +106,9 @@ data:
       edpm-compute-1:
         hostName: edpm-compute-1
     services:
+      - repo-setup
       - bootstrap
       - download-cache
-      - reboot-os
-      - configure-ovs-dpdk
       - configure-network
       - validate-network
       - install-os
@@ -160,7 +120,7 @@ data:
       - neutron-ovn
       - neutron-metadata
       - libvirt
-      - nova-custom-ovsdpdk
+      - nova
       - telemetry
   nova:
     compute:
