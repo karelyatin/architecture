@@ -11,7 +11,7 @@ data:
   root_password: cmVkaGF0Cg==
   preProvisioned: false
   baremetalSetTemplate:
-    ctlplaneInterface: eno1
+    ctlplaneInterface: eno2
     cloudUserName: cloud-admin
     provisioningInterface: enp5s0
     bmhLabelSelector:
@@ -60,7 +60,7 @@ data:
             domain: {{ dns_search_domains }}
             addresses:
             - ip_netmask: {{ ctlplane_ip }}/{{ ctlplane_cidr }}
-            routes: []
+            routes: {{ ctlplane_host_routes }}
             members:
             - type: interface
               name: nic2
@@ -89,7 +89,7 @@ data:
         edpm_sshd_configure_firewall: true
         edpm_sshd_allowed_ranges:
           - 192.168.122.0/24
-          - 10.9.76.0/24
+          - 192.168.125.0/24
     networks:
       - defaultRoute: true
         name: ctlplane
