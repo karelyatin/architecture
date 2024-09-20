@@ -1,0 +1,54 @@
+# local-config: referenced, but not emitted by kustomize
+#
+# CHANGEME:
+#
+# - change numa_nodes in the neutron and neutron_tunnel section
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-values
+  annotations:
+    config.kubernetes.io/local-config: "true"
+data:
+  preserveJobs: false
+  neutron:
+    customServiceConfig: |
+      [DEFAULT]
+      api_workers = 6
+      [ml2]
+      mechanism_drivers = ovn
+  ovn:
+    ovnController:
+      nicMappings:
+        datacentre: ospbr
+
+
+  glance:
+    customServiceConfig: |
+      [DEFAULT]
+      enabled_backends = default_backend:swift
+      [glance_store]
+      default_backend = default_backend
+      [default_backend]
+      swift_store_create_container_on_put = True
+      swift_store_auth_version = 3
+      swift_store_auth_address = {{ .KeystoneInternalURL }}
+      swift_store_endpoint_type = internalURL
+      swift_store_user = service:glance
+      swift_store_key = {{ .ServicePassword }}
+    default:
+      replicas: 1
+  swift:
+    enabled: true
+  telemetry:
+    enabled: true
+    template:
+      ceilometer:
+        enabled: true
+  nova:
+    schedulerServiceTemplate:
+      customServiceConfig: |
+        [filter_scheduler]
+        enabled_filtes = AvailabilityZoneFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter,NUMATopologyFilter,AggregateInstanceExtraSpecsFilter
